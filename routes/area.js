@@ -1,0 +1,9 @@
+const express = require("express");
+const router = express.Router();
+const areaController = require("../controllers/area");
+
+router.post("/addarea", areaController.postArea);
+router.put("/postsurvey", areaController.addSurvey);
+router.get("/getonearea", areaController.getOneArea);
+
+module.exports = router;

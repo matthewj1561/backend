@@ -1,0 +1,8 @@
+GET http://localhost:5000/user?email=matthewj1561@gmail.com
+###
+POST http://localhost:5000/posts/add HTTP/1.1
+content-type: application/json
+
+{
+    "body": "fjdskl;sfds"
+}
