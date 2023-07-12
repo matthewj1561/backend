@@ -34,6 +34,8 @@ module.exports.createPost = async (req, res) => {
     contactInfo: req.body.contactInfo,
     comments: req.body.comments,
     likes: req.body.likes,
+    city: req.body.city,
+    state: req.body.state,
   };
   const result = await dbo.getDb().collection("GigPosts").insertOne(post);
 
@@ -139,5 +141,28 @@ module.exports.getComments = async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
     console.log(err);
+  }
+};
+
+module.exports.getByLocation = async (req, res) => {
+  try {
+    const result = await dbo
+      .getDb()
+      .collection("GigPosts")
+      .find({ city: req.query.city, state: req.query.state });
+    result
+      .toArray()
+      .then((list) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json(list);
+      })
+
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Some error occurred while retrieving Posts.",
+        });
+      });
+  } catch (err) {
+    res.status(500).json(err);
   }
 };

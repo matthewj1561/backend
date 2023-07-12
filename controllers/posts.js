@@ -21,6 +21,29 @@ module.exports.getAll = async (req, res) => {
   }
 };
 
+module.exports.getByLocation = async (req, res) => {
+  try {
+    const result = await dbo
+      .getDb()
+      .collection("Posts")
+      .find({ city: req.query.city, state: req.query.state });
+    result
+      .toArray()
+      .then((list) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json(list);
+      })
+
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Some error occurred while retrieving Posts.",
+        });
+      });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 module.exports.createPost = async (req, res) => {
   // #swagger.tags = ['Journal']
   const post = {
@@ -29,6 +52,8 @@ module.exports.createPost = async (req, res) => {
     body: req.body.body,
     comments: req.body.comments,
     likes: req.body.likes,
+    city: req.body.city,
+    state: req.body.state,
   };
   const result = await dbo.getDb().collection("Posts").insertOne(post);
 

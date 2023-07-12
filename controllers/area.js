@@ -46,7 +46,7 @@ module.exports.postArea = async (req, res) => {
       res.status(500).json(error || "Couldn't post Area.");
     }
   } else {
-    res.status(500).json(existingDoc.error || "Area already Exists");
+    res.status(304).json(existingDoc.error || "Area already Exists");
   }
 };
 
@@ -99,7 +99,8 @@ module.exports.getOneArea = async (req, res) => {
 
       .catch((err) => {
         res.status(500).send({
-          message: err.message || "Some error occurred while retrieving users.",
+          message:
+            err.message || "Some error occurred while retrieving the area.",
         });
       });
   } catch (err) {
@@ -107,6 +108,25 @@ module.exports.getOneArea = async (req, res) => {
   }
 };
 
+module.exports.getAreas = async (req, res) => {
+  try {
+    const result = await dbo.getDb().collection("Areas").find();
+    result
+      .toArray()
+      .then((list) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json(list);
+      })
+
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Some error occurred while retrieving areas.",
+        });
+      });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
 // {
 //   areaCity: req.body.city,
 //   areaState: req.body.state,
