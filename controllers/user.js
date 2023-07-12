@@ -18,6 +18,33 @@ const dbo = require("../db/conn");
 //     });
 //   });
 
+module.exports.AddUser = async (req, res) => {
+  try {
+    const result = await dbo
+      .getDb()
+      .collection("Users")
+      .find({ email: req.body.email });
+    const user = await result.toArray();
+    console.log(req.body.email);
+    if (user.length) {
+      // acknowledge and return nothing
+      res.status(200).json(result);
+    } else {
+      // create new user
+      const user = {
+        email: req.body.email,
+        family_name: req.body.familyName,
+        given_name: req.body.givenName,
+        picture: req.body.picture,
+      };
+      const result = await dbo.getDb().collection("Users").insertOne(user);
+      res.status(201);
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 module.exports.getUser = async (req, res) => {
   try {
     const result = await dbo
