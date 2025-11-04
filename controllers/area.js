@@ -127,6 +127,30 @@ module.exports.getAreas = async (req, res) => {
     res.status(500).json(err);
   }
 };
+
+module.exports.getUserLocation = async (req, res) => {
+  try {
+    const latitude = req.query.lat;
+    const longitude = req.query.lng;
+
+    if (!latitude || !longitude) {
+      return res.status(400).json({ message: "Latitude and longitude are required" });
+    }
+
+    const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&result_type=locality&key=${process.env.GOOGLE_CLOUD_KEY}`;
+    
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || "Some error occurred while retrieving location.",
+    });
+  }
+};
+
 // {
 //   areaCity: req.body.city,
 //   areaState: req.body.state,
